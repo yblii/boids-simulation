@@ -8,20 +8,23 @@ export class Bound {
         this.x2 = x2;
         this.y1 = y1;
         this.y2 = y2;
+
+        this.width = x2 - x1;
+        this.height = y2 - y1;
     }
 
     contains(pos) {
-        if(pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2 ) {
+        if(pos.x >= this.x1 && pos.x < this.x2 && pos.y >= this.y1 && pos.y < this.y2 ) {
             return true;
         }
         return false;
     }
 
     getMidX() {
-        return x1 + (x2 - x1) / 2;
+        return this.x1 + (this.x2 - this.x1) / 2;
     }
 
     getMidY() {
-        return y1 + (y2 - y1) / 2;
+        return this.y1 + (this.y2 - this.y1) / 2;
     }
 }

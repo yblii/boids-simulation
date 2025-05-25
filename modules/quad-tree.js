@@ -23,18 +23,18 @@ export class QuadTree {
 
                 // in top left quadrant of node
                 if(x < xDivider && y < yDivider) {
-                    currNode = currNode.children.topLeft;
+                    currNode = currNode.NW;
                 } else if(x < xDivider && y >= yDivider) { // in bottom left
-                    currNode = currNode.children.botLeft;
+                    currNode = currNode.SW;
                 } else if(x > xDivider && y < yDivider)  { // in top right
-                    currNode = currNode.children.topRight;
+                    currNode = currNode.NE;
                 } else { // in bottom right
-                    currNode = currNode.children.botRight;
+                    currNode = currNode.SE;
                 }
             }
 
             currNode.add(obj);
-            if(currNode.size > this.splittingFactor) {
+            if(currNode.size >= this.splittingFactor) {
                 const xDivider = currNode.bound.getMidX();
                 const yDivider = currNode.bound.getMidY();
 
@@ -60,9 +60,32 @@ export class QuadTree {
                 }
 
                 currNode.isParent = true;
+                currNode.setChildren(NW, NE, SW, SE);
             }
         }
     }
 
+    debug(sketch) {
+        sketch.noFill();
+        sketch.stroke('red');
+        sketch.strokeWeight(1);
+
+        this.debugHelper(sketch, this.root);
+
+        sketch.fill(255);
+        sketch.stroke('black');
+        sketch.strokeWeight(1);
+    }
+
+    debugHelper(sketch, curr) {
+        sketch.rect(curr.bound.x1, curr.bound.y1, curr.bound.width, curr.bound.height); 
+
+        if(curr.isParent) {
+           this.debugHelper(sketch, curr.NE);
+           this.debugHelper(sketch, curr.NW);
+           this.debugHelper(sketch, curr.SE);
+           this.debugHelper(sketch, curr.SW);
+        }
+    }
     // get potential neighbors    
 }

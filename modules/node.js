@@ -33,6 +33,13 @@ export class Node {
         return this.size;
     }
 
+    setChildren(NW, NE, SW, SE) {
+        this.NW = NW;
+        this.NE = NE;
+        this.SW = SW;
+        this.SE = SE;
+    }
+
     add(obj) {
         this.data.push(obj);
         this.size++;
