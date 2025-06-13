@@ -3,30 +3,36 @@ import { Bound } from "./bound.js";
 import { Boid } from "./boid.js";
 
 const s = ( sketch ) => {
-  const WIDTH = 500;
-  const HEIGHT = 500;
-  const PARTICLE_COUNT = 50;
-  const SPLITTING_FACTOR = 1;
+  const WIDTH = 1000;
+  const HEIGHT = 1000;
+  const PARTICLE_COUNT = 100;
+  const SPLITTING_FACTOR = 3;
 
-  const particles = [];
-  const tree = new QuadTree(SPLITTING_FACTOR, new Bound(0, WIDTH, 0, HEIGHT));
+  const PARTICLES = [];
+  const TREE = new QuadTree(SPLITTING_FACTOR, new Bound(0, WIDTH, 0, HEIGHT));
 
   for(let i = 0; i < PARTICLE_COUNT; i++) {
-    const boid = new Boid(Math.random() * 500, Math.random() * 500);
-    tree.add(boid);
-    particles.push(boid);
-  }
-
+    const boid = new Boid(Math.random() * 400, Math.random() * 400);
+    TREE.add(boid);
+    PARTICLES.push(boid);
+  };
+  
   sketch.setup = () => {
     sketch.createCanvas(WIDTH, HEIGHT);
     sketch.background(0);
-    tree.debug(sketch);
+    
   };
 
   sketch.draw = () => {
-    for(const boid of particles) {
+    sketch.background(0);
+    for(const boid of PARTICLES) {
+      boid.update();
+      if(!boid.parentNode.bound.contains(boid.position)) {
+        TREE.update(boid);
+      }
       sketch.circle(boid.position.x, boid.position.y, 10);
     }
+    TREE.debug(sketch);
   };
 };
 
