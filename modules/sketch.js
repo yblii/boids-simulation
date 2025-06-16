@@ -16,7 +16,7 @@ const s = ( sketch ) => {
     TREE.add(boid);
     PARTICLES.push(boid);
   };
-  
+
   sketch.setup = () => {
     sketch.createCanvas(WIDTH, HEIGHT);
     sketch.background(0);
@@ -25,6 +25,7 @@ const s = ( sketch ) => {
 
   sketch.draw = () => {
     sketch.background(0);
+    sketch.fill(255);
     for(const boid of PARTICLES) {
       boid.update();
       if(!boid.parentNode.bound.contains(boid.position)) {

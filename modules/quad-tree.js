@@ -158,5 +158,15 @@ export class QuadTree {
         }
     }
     
-    // TODO: get neighbors
+    // returns list of objects in adjacent regions
+    getNeighbors(obj) {
+        const node = obj.parentNode;
+        let nearest = [];
+        if(node.parentNode) {
+            const parent = node.parentNode;
+            nearest = parent.NW.data.concat(parent.NE.data, parent.SW.data, parent.SE.data);
+        }
+
+        return nearest;
+    }
 }
