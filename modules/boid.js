@@ -13,9 +13,13 @@ export class Boid {
         return {x: this.x, y: this.y};
     }
 
+
     update(neighbors) {
-        this.steerToCenter(neighbors);
-        this.align(neighbors);
+        if(neighbors.length > 0) {
+            this.steerToCenter(neighbors);
+            this.align(neighbors);
+            this.separate(neighbors);
+        }
 
         this.velocity.setMag(this.speed);
 
@@ -56,9 +60,9 @@ export class Boid {
 
     separate(neighbors) {
         for(const boid of neighbors) {
-            if(this.distBetween(boid) < 20) {
+            if(this.distBetween(boid) < 500) {
                 const diff = this.p5.createVector(boid.x - this.x, boid.y - this.y);
-                this.velocity.sub(diff.mult(0.5));
+                this.velocity.sub(diff.mult(0.005));
             }
         }
     }
@@ -68,9 +72,9 @@ export class Boid {
     }
 
     debug(sketch) {
-        sketch.fill('red');
+        sketch.stroke('red');
         this.p5.line(this.x, this.y, this.x + this.velocity.x * 5, this.y + this.velocity.y * 5);
-        sketch.fill('white');
+        sketch.stroke('black');
         
     }
 }
