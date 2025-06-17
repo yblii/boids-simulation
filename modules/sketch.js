@@ -8,8 +8,8 @@ const s = ( sketch ) => {
   const MARGIN = 10;
 
   const PARTICLE_COUNT = 50;
-  const SPLITTING_FACTOR = 3;
-  const SPEED = 2;
+  const SPLITTING_FACTOR = 5;
+  const SPEED = 4;
 
   const PARTICLES = [];
   const TREE = new QuadTree(SPLITTING_FACTOR, new Bound(0 - MARGIN, WIDTH + MARGIN, 0 - MARGIN, HEIGHT + MARGIN));
@@ -30,32 +30,40 @@ const s = ( sketch ) => {
     sketch.background(0);
     sketch.fill(255);
     
+    // updates boid positions and renders
     for(const boid of PARTICLES) {
       boid.update(TREE.getNeighbors(boid));
 
-      if(boid.position.x > WIDTH) {
-        boid.x = 0;
-      }
-
-      if(boid.position.y > HEIGHT) {
-        boid.y = 0;
-      }
-
-      if(boid.position.x < 0) {
-        boid.x = WIDTH;
-      }
-
-      if(boid.position.y < 0) {
-        boid.y = HEIGHT;
-      }
+      wrapBoid(boid);
 
       if(!boid.parentNode.bound.contains(boid.position)) {
         TREE.update(boid);
       }
-
-      sketch.circle(boid.position.x, boid.position.y, 10);
+      TREE.debug(sketch);
+      sketch.circle(boid.position.x, boid.position.y, 20);  
+      // TODO: change appearance of boids
     }
   };
+
+  // wraps boid to other side of window once at the edge
+  function wrapBoid(boid) {
+    if(boid.position.x > WIDTH) {
+      boid.x = 0;
+    }
+
+    if(boid.position.y > HEIGHT) {
+      boid.y = 0;
+    }
+
+    if(boid.position.x < 0) {
+      boid.x = WIDTH;
+    }
+
+    if(boid.position.y < 0) {
+      boid.y = HEIGHT;
+    }
+  }
+
 };
 
 let myp5 = new p5(s);

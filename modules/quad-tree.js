@@ -1,7 +1,7 @@
 import { Node } from "./node.js";
 import { Bound } from "./bound.js";
 
-// A QuadTree that stores objects based on their position in the given 2 dimensional bound. 
+// A QuadTree that stores objects based on their position in the given 2 dimensional bound
 export class QuadTree {
     constructor(factor, bound) {
         this.root = undefined;
@@ -9,16 +9,17 @@ export class QuadTree {
         this.bound = bound;
         this.minWidth = bound.width / 50;
     }
-
+    
+    // Adds an object into the QuadTree
     add(obj) {
         this.addHelper(obj, this.root);
     }
 
     // Adds an object into the QuadTree, dividing nodes into quadrants if the splittingFactor
-    // is exceeded.
+    // is exceeded
     addHelper(obj, node) {
         if(this.root === undefined) {
-            this.root = new Node(this.bound, [obj], undefined);
+            this.root = new Node(this.bound, [obj], undefined, undefined);
             obj.parentNode = this.root;
         } else {
             let currNode = node;
@@ -30,14 +31,14 @@ export class QuadTree {
                 const xDivider = currNode.bound.getMidX();
                 const yDivider = currNode.bound.getMidY();
 
-                // in top left quadrant of node
+                // in NW quadrant of node
                 if(x < xDivider && y < yDivider) {
                     currNode = currNode.NW;
-                } else if(x < xDivider && y >= yDivider) { // in bottom left
+                } else if(x < xDivider && y >= yDivider) { // in SW
                     currNode = currNode.SW;
-                } else if(x > xDivider && y < yDivider)  { // in top right
+                } else if(x >= xDivider && y < yDivider)  { // in NE
                     currNode = currNode.NE;
-                } else { // in bottom right
+                } else { // in SE
                     currNode = currNode.SE;
                 }
             }
@@ -58,39 +59,35 @@ export class QuadTree {
         const yDivider = node.bound.getMidY();
 
         const NW = new Node(new Bound(node.bound.x1, xDivider, 
-                node.bound.y1, yDivider), [], node);
+                node.bound.y1, yDivider), [], node, 'NW');
         const NE = new Node(new Bound(xDivider, node.bound.x2, 
-                node.bound.y1, yDivider), [], node);
+                node.bound.y1, yDivider), [], node, 'NE');
         const SW = new Node(new Bound(node.bound.x1, xDivider, 
-                yDivider, node.bound.y2), [], node);
+                yDivider, node.bound.y2), [], node, 'SW');
         const SE = new Node(new Bound(xDivider, node.bound.x2, 
-                yDivider, node.bound.y2), [], node);
+                yDivider, node.bound.y2), [], node, 'SE');
 
         for(const obj of node.data) {
             if(NW.bound.contains(obj.position)) {
                 NW.add(obj);
-                obj.parentNode = NW;
 
                 if(this.canSplit(NW)) {
                     this.splitNode(NW);
                 }
             } else if(NE.bound.contains(obj.position)) {
                 NE.add(obj);
-                obj.parentNode = NE;
 
                 if(this.canSplit(NE)) {
                     this.splitNode(NE);
                 }
             } else if(SW.bound.contains(obj.position)) {
                 SW.add(obj);
-                obj.parentNode = SW;
 
                 if(this.canSplit(SW)) {
                     this.splitNode(SW);
                 }
             } else {
                 SE.add(obj);
-                obj.parentNode = SE;
 
                 if(this.canSplit(SE)) {
                     this.splitNode(SE);
@@ -98,7 +95,6 @@ export class QuadTree {
             }
         }
 
-        node.isParent = true;
         node.setChildren(NW, NE, SW, SE);
         node.clearData(); // parent nodes contain no data
     }
@@ -109,7 +105,7 @@ export class QuadTree {
         return node.size >= this.splittingFactor && node.bound.width > this.minWidth;
     }
 
-    // Updates the node that the given object is stored in
+    // Updates the given object's location in tree
     update(obj) {
         let node = obj.parentNode;
         node.remove(obj);
@@ -134,6 +130,21 @@ export class QuadTree {
 
         node.collapse();
     }
+        
+    // returns list of objects in adjacent nodes
+    getNeighbors(obj) {
+        const node = obj.parentNode;
+        let nearest = [];
+        
+        if(node.parentNode && node.parentNode.isParent) {
+            const parent = node.parentNode;
+            nearest = parent.NW.data.concat(parent.NE.data, parent.SW.data, parent.SE.data);
+            
+            // TODO: improve nearest neighbors algorithm
+        }
+
+        return nearest;
+    }
 
     // Given a p5 sketch object, draws a visual representation of the regions split by each node.
     debug(sketch) {
@@ -156,17 +167,5 @@ export class QuadTree {
            this.debugHelper(sketch, curr.SE);
            this.debugHelper(sketch, curr.SW);
         }
-    }
-    
-    // returns list of objects in adjacent regions
-    getNeighbors(obj) {
-        const node = obj.parentNode;
-        let nearest = [];
-        if(node.parentNode && node.parentNode.isParent) {
-            const parent = node.parentNode;
-            nearest = parent.NW.data.concat(parent.NE.data, parent.SW.data, parent.SE.data);
-        }
-
-        return nearest;
     }
 }
