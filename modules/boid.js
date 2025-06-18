@@ -1,21 +1,21 @@
 export class Boid {
-    constructor(x, y, speed, p5) {
+    constructor(x, y, speed, p5, minDist) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.p5 = p5;
         this.velocity = p5.createVector(0.5, 0.5);
-
+        this.minDist = minDist
         this.parentNode = undefined;
     }
 
     get position() {
-        return {x: this.x, y: this.y};
+        return { x: this.x, y: this.y };
     }
 
 
     update(neighbors) {
-        if(neighbors.length > 0) {
+        if (neighbors.length > 0) {
             this.steerToCenter(neighbors);
             this.align(neighbors);
             this.separate(neighbors);
@@ -32,7 +32,7 @@ export class Boid {
         let centerX = 0;
         let centerY = 0;
 
-        for(const boid of neighbors) {
+        for (const boid of neighbors) {
             centerX += boid.x;
             centerY += boid.y;
         }
@@ -48,27 +48,27 @@ export class Boid {
     align(neighbors) {
         const aveVelocity = this.p5.createVector(0, 0);
 
-        for(const boid of neighbors) {
+        for (const boid of neighbors) {
             aveVelocity.add(boid.velocity);
         }
 
         aveVelocity.mult(1 / neighbors.length);
-        
+
         aveVelocity.sub(this.velocity);
         this.velocity.add(aveVelocity.mult(0.1));
     }
 
     separate(neighbors) {
-        for(const boid of neighbors) {
-            if(this.distBetween(boid) < 600) {
+        for (const boid of neighbors) {
+            if (this.distBetween(boid) < this.minDist) {
                 const diff = this.p5.createVector(boid.x - this.x, boid.y - this.y);
-                this.velocity.sub(diff.mult(0.01));
+                this.velocity.sub(diff.mult(0.008));
             }
         }
     }
 
     distBetween(other) {
-        return (other.x - this.x) * (other.x - this.x) + (other.y - this.y) * (other.y - this.y);
+        return Math.sqrt((other.x - this.x) * (other.x - this.x) + (other.y - this.y) * (other.y - this.y));
     }
 
     debug(sketch) {

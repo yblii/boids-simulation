@@ -153,10 +153,6 @@ export class QuadTree {
         sketch.strokeWeight(1);
 
         this.debugHelper(sketch, this.root);
-
-        sketch.fill(255);
-        sketch.stroke('black');
-        sketch.strokeWeight(1);
     }
 
     debugHelper(sketch, curr) {
