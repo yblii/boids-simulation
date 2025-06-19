@@ -13,12 +13,9 @@ export class Boid {
         return { x: this.x, y: this.y };
     }
 
-
     update(neighbors) {
         if (neighbors.length > 0) {
-            this.steerToCenter(neighbors);
-            this.align(neighbors);
-            this.separate(neighbors);
+            this.updateVelocity(neighbors);
         }
 
         this.velocity.limit(this.speed);
@@ -27,44 +24,41 @@ export class Boid {
         this.y += this.velocity.y;
     }
 
-    steerToCenter(neighbors) {
-        // average position of neighbors
+    updateVelocity(neighbors) {
+        // center of surrounding boids (for coherence)
         let centerX = 0;
         let centerY = 0;
+
+        // average direction of surrounding boids (for alignment)
+        const aveVelocity = this.p5.createVector(0, 0);
+
+        // where to steer to avoid other boids (for separation)
+        const avoidance = this.p5.createVector(0, 0);
 
         for (const boid of neighbors) {
             centerX += boid.x;
             centerY += boid.y;
+
+            aveVelocity.add(boid.velocity);
+
+            // checking if nearby boids are too close
+            if (this.distBetween(boid) < this.minDist * 1.5) {
+                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y));
+            }
         }
 
         centerX /= neighbors.length;
         centerY /= neighbors.length;
 
+        // distance from center of surrounding boids to this one
         const diff = this.p5.createVector(centerX - this.x, centerY - this.y);
 
-        this.velocity.add(diff.mult(0.005));
-    }
+        const finalOffset = this.p5.createVector(0, 0);
+        finalOffset.add(diff.mult(0.005));
+        finalOffset.sub(avoidance.mult(0.04));
+        finalOffset.add(aveVelocity.mult(0.005));
 
-    align(neighbors) {
-        const aveVelocity = this.p5.createVector(0, 0);
-
-        for (const boid of neighbors) {
-            aveVelocity.add(boid.velocity);
-        }
-
-        aveVelocity.mult(1 / neighbors.length);
-
-        aveVelocity.sub(this.velocity);
-        this.velocity.add(aveVelocity.mult(0.05));
-    }
-
-    separate(neighbors) {
-        for (const boid of neighbors) {
-            if (this.distBetween(boid) < this.minDist) {
-                const diff = this.p5.createVector(boid.x - this.x, boid.y - this.y);
-                this.velocity.sub(diff.mult(0.07));
-            }
-        }
+        this.velocity.add(finalOffset);
     }
 
     distBetween(other) {

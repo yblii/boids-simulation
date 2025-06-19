@@ -7,7 +7,7 @@ const s = (sketch) => {
     const HEIGHT = sketch.windowHeight;
     const MARGIN = 10;
 
-    const PARTICLE_COUNT = 1000;
+    const PARTICLE_COUNT = 40;
     const SPLITTING_FACTOR = 5;
     const SPEED = 10;
 
@@ -18,13 +18,13 @@ const s = (sketch) => {
 
     // initialize boids at random positions
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-        const boid = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
+        const boid = new Boid(Math.random() * WIDTH, Math.random() * HEIGHT, SPEED, sketch, SIZE * SIZE);
         TREE.add(boid);
         PARTICLES.push(boid);
     };
 
-    const test = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
-    TREE.add(test);
+    /* const test = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
+    TREE.add(test); */
 
     sketch.setup = () => {
         sketch.createCanvas(WIDTH, HEIGHT);
@@ -35,8 +35,8 @@ const s = (sketch) => {
     sketch.draw = () => {
         sketch.background(136, 198, 219);
 
-        TREE.debugNeighbors(sketch, test);
-        TREE.debug(sketch);
+        //TREE.debugNeighbors(sketch, test);
+        //TREE.debug(sketch);
 
         sketch.fill(255);
         sketch.noStroke();
@@ -54,7 +54,7 @@ const s = (sketch) => {
             drawBoid(boid);
         }
 
-        test.update(TREE.getNeighbors(test));
+        /* test.update(TREE.getNeighbors(test));
 
         wrapBoid(test);
 
@@ -63,7 +63,7 @@ const s = (sketch) => {
         }
         sketch.fill(0);
 
-        drawBoid(test);
+        drawBoid(test); */
     };
 
     function drawBoid(boid) {
