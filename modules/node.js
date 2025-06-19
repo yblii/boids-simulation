@@ -32,6 +32,13 @@ export class Node {
         this.isParent = false;
     }
 
+    getData() {
+        if(this.isParent) {
+            return this.NW.data.concat(this.NE.data, this.SW.data, this.SE.data);
+        }
+        return this.data;
+    }
+
     // removes given object from data
     remove(obj) {
         this.data = this.data.filter((elem) => elem !== obj);

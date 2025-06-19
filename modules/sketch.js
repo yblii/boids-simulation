@@ -7,9 +7,9 @@ const s = (sketch) => {
     const HEIGHT = sketch.windowHeight;
     const MARGIN = 10;
 
-    const PARTICLE_COUNT = 50;
+    const PARTICLE_COUNT = 1000;
     const SPLITTING_FACTOR = 5;
-    const SPEED = 3;
+    const SPEED = 10;
 
     const PARTICLES = [];
     const TREE = new QuadTree(SPLITTING_FACTOR, new Bound(0 - MARGIN, WIDTH + MARGIN, 0 - MARGIN, HEIGHT + MARGIN));
@@ -18,10 +18,13 @@ const s = (sketch) => {
 
     // initialize boids at random positions
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-        const boid = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * 2);
+        const boid = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
         TREE.add(boid);
         PARTICLES.push(boid);
     };
+
+    const test = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
+    TREE.add(test);
 
     sketch.setup = () => {
         sketch.createCanvas(WIDTH, HEIGHT);
@@ -31,6 +34,10 @@ const s = (sketch) => {
 
     sketch.draw = () => {
         sketch.background(136, 198, 219);
+
+        TREE.debugNeighbors(sketch, test);
+        TREE.debug(sketch);
+
         sketch.fill(255);
         sketch.noStroke();
 
@@ -47,6 +54,16 @@ const s = (sketch) => {
             drawBoid(boid);
         }
 
+        test.update(TREE.getNeighbors(test));
+
+        wrapBoid(test);
+
+        if (!test.parentNode.bound.contains(test.position)) {
+            TREE.update(test);
+        }
+        sketch.fill(0);
+
+        drawBoid(test);
     };
 
     function drawBoid(boid) {
@@ -65,7 +82,7 @@ const s = (sketch) => {
         const xOffset = SIZE / 2 * sketch.cos(angle);
         const yOffset = SIZE / 2 * sketch.sin(angle);
 
-        sketch.triangle(boid.position.x + dirVector.x, boid.position.y + dirVector.y,
+        sketch.triangle(boid.position.x + dirVector.x * 1.5, boid.position.y + dirVector.y * 1.5,
             boid.position.x - xOffset, boid.position.y + yOffset,
             boid.position.x + xOffset, boid.position.y - yOffset);
     }

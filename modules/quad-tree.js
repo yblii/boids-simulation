@@ -1,5 +1,7 @@
 import { Node } from "./node.js";
 import { Bound } from "./bound.js";
+import { Dir } from "./directions.js";
+import { Pos } from "./positions.js";
 
 // A QuadTree that stores objects based on their position in the given 2 dimensional bound
 export class QuadTree {
@@ -7,7 +9,7 @@ export class QuadTree {
         this.root = undefined;
         this.splittingFactor = factor;
         this.bound = bound;
-        this.minWidth = bound.width / 50;
+        this.minWidth = bound.width / 20;
     }
     
     // Adds an object into the QuadTree
@@ -59,13 +61,13 @@ export class QuadTree {
         const yDivider = node.bound.getMidY();
 
         const NW = new Node(new Bound(node.bound.x1, xDivider, 
-                node.bound.y1, yDivider), [], node, 'NW');
+                node.bound.y1, yDivider), [], node, Pos.NW);
         const NE = new Node(new Bound(xDivider, node.bound.x2, 
-                node.bound.y1, yDivider), [], node, 'NE');
+                node.bound.y1, yDivider), [], node, Pos.NE);
         const SW = new Node(new Bound(node.bound.x1, xDivider, 
-                yDivider, node.bound.y2), [], node, 'SW');
+                yDivider, node.bound.y2), [], node, Pos.SW);
         const SE = new Node(new Bound(xDivider, node.bound.x2, 
-                yDivider, node.bound.y2), [], node, 'SE');
+                yDivider, node.bound.y2), [], node, Pos.SE);
 
         for(const obj of node.data) {
             if(NW.bound.contains(obj.position)) {
@@ -134,22 +136,126 @@ export class QuadTree {
     // returns list of objects in adjacent nodes
     getNeighbors(obj) {
         const node = obj.parentNode;
-        let nearest = [];
-        
-        if(node.parentNode && node.parentNode.isParent) {
-            const parent = node.parentNode;
-            nearest = parent.NW.data.concat(parent.NE.data, parent.SW.data, parent.SE.data);
-            
-            // TODO: improve nearest neighbors algorithm
-        }
+        const adjNodes = this.getSurrounding(node);
 
-        return nearest;
+        let data = [];
+
+        for(const node of adjNodes) {
+            if(node !== undefined) {
+                data = data.concat(node.getData());
+            }
+        }
+        return data;
+    }
+
+
+    getSurrounding(node) {
+        let nodes = [node];
+        const up = this.getAdjacent(node, Dir.UP);
+        const down = this.getAdjacent(node, Dir.DOWN);
+        const left = this.getAdjacent(node, Dir.LEFT);
+        const right = this.getAdjacent(node, Dir.RIGHT);
+
+        nodes.push(up);
+        nodes.push(down);
+        nodes.push(left);
+        nodes.push(right);
+        nodes.push(this.getAdjacent(up, Dir.LEFT));
+        nodes.push(this.getAdjacent(up, Dir.RIGHT));
+        nodes.push(this.getAdjacent(down, Dir.LEFT));
+        nodes.push(this.getAdjacent(down, Dir.RIGHT));
+
+        return nodes;
+    }
+    
+    getAdjacent(node, dir) {
+        if(node === undefined || node.pos === undefined) { return; }
+        
+        const parent = node.parentNode;
+
+        if(node.pos === Pos.NW) {
+            switch(dir) {
+                case Dir.UP:
+                    const upperNeighbor = this.getAdjacent(parent, dir);
+                    if(upperNeighbor !== undefined && upperNeighbor.isParent) {
+                        return upperNeighbor.SW;
+                    }
+                    return upperNeighbor;
+                case Dir.DOWN:
+                    return parent.SW;
+                case Dir.LEFT:
+                    const leftNeighbor = this.getAdjacent(parent, dir);
+                    if(leftNeighbor !== undefined && leftNeighbor.isParent) {
+                        return leftNeighbor.NE;
+                    }
+                    return leftNeighbor;
+                case Dir.RIGHT:
+                    return parent.NE;
+            }
+        } else if(node.pos === Pos.NE) {
+            switch(dir) {
+                case Dir.UP:
+                    const upperNeighbor = this.getAdjacent(parent, dir);
+                    if(upperNeighbor !== undefined && upperNeighbor.isParent) {
+                        return upperNeighbor.SE;
+                    }
+                    return upperNeighbor;
+                case Dir.DOWN:
+                    return parent.SE;
+                case Dir.LEFT:
+                    return parent.NW;
+                case Dir.RIGHT:
+                    const rightNeighbor = this.getAdjacent(parent, dir);
+                    if(rightNeighbor !== undefined && rightNeighbor.isParent) {
+                        return rightNeighbor.NW;
+                    }
+                    return rightNeighbor;
+            }
+        } else if(node.pos === Pos.SW) {
+            switch(dir) {
+                case Dir.UP:
+                    return parent.NW;
+                case Dir.DOWN:
+                    const lowerNeighbor = this.getAdjacent(parent, dir);
+                    if(lowerNeighbor !== undefined && lowerNeighbor.isParent) {
+                        return lowerNeighbor.NW;
+                    }
+                    return lowerNeighbor;
+                case Dir.LEFT:
+                    const leftNeighbor = this.getAdjacent(parent, dir);
+                    if(leftNeighbor !== undefined && leftNeighbor.isParent) {
+                        return leftNeighbor.SE;
+                    }
+                    return leftNeighbor;
+                case Dir.RIGHT:
+                    return parent.SE;
+            }
+        } else {
+            switch(dir) {
+                case Dir.UP:
+                    return parent.NE;
+                case Dir.DOWN:
+                    const lowerNeighbor = this.getAdjacent(parent, dir);
+                    if(lowerNeighbor !== undefined && lowerNeighbor.isParent) {
+                        return lowerNeighbor.NE;
+                    }
+                    return lowerNeighbor;
+                case Dir.LEFT: 
+                    return parent.SW;
+                case Dir.RIGHT:
+                    const rightNeighbor = this.getAdjacent(parent, dir);
+                    if(rightNeighbor !== undefined && rightNeighbor.isParent) {
+                        return rightNeighbor.SW;
+                    }
+                    return rightNeighbor;
+            }
+        }
     }
 
     // Given a p5 sketch object, draws a visual representation of the regions split by each node.
     debug(sketch) {
         sketch.noFill();
-        sketch.stroke('red');
+        sketch.stroke('black');
         sketch.strokeWeight(1);
 
         this.debugHelper(sketch, this.root);
@@ -163,5 +269,18 @@ export class QuadTree {
            this.debugHelper(sketch, curr.SE);
            this.debugHelper(sketch, curr.SW);
         }
+    }
+
+    debugNeighbors(sketch, obj) {
+        sketch.fill('red');
+        for(const curr of this.getSurrounding(obj.parentNode)) {
+            if(curr !== undefined)
+                sketch.rect(curr.bound.x1, curr.bound.y1, curr.bound.width, curr.bound.height);
+        }
+
+        sketch.fill('blue');
+        const curr = obj.parentNode;
+        sketch.rect(curr.bound.x1, curr.bound.y1, curr.bound.width, curr.bound.height);
+
     }
 }
