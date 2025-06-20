@@ -13,12 +13,16 @@ export class Boid {
         return { x: this.x, y: this.y };
     }
 
-    update(neighbors) {
+    update(neighbors, mousePos) {
+        if(this.distBetween(mousePos) < this.minDist * 200) {
+            this.velocity.sub(this.p5.createVector(mousePos.x - this.x, mousePos.y - this.y).mult(200 / this.distBetween(mousePos)));
+        }
+
         if (neighbors.length > 0) {
             this.updateVelocity(neighbors);
         }
 
-        this.velocity.limit(this.speed);
+        this.velocity.setMag(this.speed);
 
         this.x += this.velocity.x;
         this.y += this.velocity.y;
@@ -51,12 +55,14 @@ export class Boid {
         centerY /= neighbors.length;
 
         // distance from center of surrounding boids to this one
-        const diff = this.p5.createVector(centerX - this.x, centerY - this.y);
+        const diff = this.p5.createVector(centerX - this.x, centerY - this.y).normalize();
+        avoidance.normalize();
+        aveVelocity.normalize();
 
         const finalOffset = this.p5.createVector(0, 0);
-        finalOffset.add(diff.mult(0.005));
-        finalOffset.sub(avoidance.mult(0.04));
-        finalOffset.add(aveVelocity.mult(0.005));
+        finalOffset.add(diff.mult(0.2));
+        finalOffset.sub(avoidance.mult(1.1));
+        finalOffset.add(aveVelocity.mult(0.4));
 
         this.velocity.add(finalOffset);
     }

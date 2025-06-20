@@ -43,7 +43,7 @@ const s = (sketch) => {
 
         // updates boid positions and renders
         for (const boid of PARTICLES) {
-            boid.update(TREE.getNeighbors(boid));
+            boid.update(TREE.getNeighbors(boid), {x: sketch.mouseX, y: sketch.mouseY});
 
             wrapBoid(boid);
 
@@ -64,6 +64,13 @@ const s = (sketch) => {
         sketch.fill(0);
 
         drawBoid(test); */
+
+        // spawns boids at mouse position
+        if(sketch.mouseIsPressed) {
+            const boid = new Boid(sketch.mouseX, sketch.mouseY, SPEED, sketch, SIZE * SIZE);
+            TREE.add(boid);
+            PARTICLES.push(boid);
+        }
     };
 
     function drawBoid(boid) {
