@@ -64,6 +64,7 @@ const s = (sketch) => {
         sketch.fill(0);
 
         drawBoid(test); */
+        
 
         // spawns boids at mouse position
         if(sketch.mouseIsPressed) {
@@ -73,8 +74,9 @@ const s = (sketch) => {
         }
     };
 
+    // renders given boid
     function drawBoid(boid) {
-        sketch.circle(boid.position.x, boid.position.y, SIZE - 2);
+        //sketch.circle(boid.position.x, boid.position.y, SIZE - 2);
 
         const dirVector = boid.velocity.copy();
         dirVector.setMag(SIZE);

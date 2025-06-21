@@ -133,7 +133,7 @@ export class QuadTree {
         node.collapse();
     }
         
-    // returns list of objects in adjacent nodes
+    // returns list of objects in nodes adjacent to given obj
     getNeighbors(obj) {
         const node = obj.parentNode;
         const adjNodes = this.getSurrounding(node);
@@ -148,7 +148,7 @@ export class QuadTree {
         return data;
     }
 
-
+    // returns a list of the nodes surrounding the given node (includes given node)
     getSurrounding(node) {
         let nodes = [node];
         const up = this.getAdjacent(node, Dir.UP);
@@ -168,6 +168,8 @@ export class QuadTree {
         return nodes;
     }
     
+    // Given a node and a direction, returns the node adjacent to the given node in the 
+    // given direction. If the desired node is not within the quadtree, will return undefined.
     getAdjacent(node, dir) {
         if(node === undefined || node.pos === undefined) { return; }
         
