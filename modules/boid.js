@@ -74,6 +74,7 @@ export class Boid {
         finalOffset.add(posOffset.mult(0.005));
         finalOffset.sub(avoidance.mult(0.03));
         finalOffset.add(velocityOffset.mult(0.009));
+        finalOffset.limit(this.speed * 0.1);
 
         this.velocity.add(finalOffset);
     }

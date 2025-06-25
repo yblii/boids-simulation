@@ -3,18 +3,18 @@ import { Bound } from "./bound.js";
 import { Boid } from "./boid.js";
 
 const s = (sketch) => {
-    const WIDTH = sketch.windowWidth;
-    const HEIGHT = sketch.windowHeight;
+    let WIDTH = sketch.windowWidth;
+    let HEIGHT = sketch.windowHeight;
     const MARGIN = 10;
 
     const PARTICLE_COUNT = 40;
     const SPLITTING_FACTOR = 5;
-    const SPEED = 10;
+    const SPEED = 7;
 
     const PARTICLES = [];
     const TREE = new QuadTree(SPLITTING_FACTOR, new Bound(0 - MARGIN, WIDTH + MARGIN, 0 - MARGIN, HEIGHT + MARGIN));
 
-    const SIZE = 30;
+    const SIZE = 20;
 
     // initialize boids at random positions
     for (let i = 0; i < PARTICLE_COUNT; i++) {
