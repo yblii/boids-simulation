@@ -7,7 +7,8 @@ const s = (sketch) => {
     let HEIGHT = sketch.windowHeight;
     const MARGIN = 10;
 
-    const PARTICLE_COUNT = 40;
+    const MAX_PARTICLE_COUNT = 300;
+    const INIT_PARTICLE_COUNT = 40;
     const SPLITTING_FACTOR = 5;
     const SPEED = 7;
 
@@ -17,7 +18,7 @@ const s = (sketch) => {
     const SIZE = 20;
 
     // initialize boids at random positions
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
+    for (let i = 0; i < INIT_PARTICLE_COUNT; i++) {
         const boid = new Boid(Math.random() * WIDTH, Math.random() * HEIGHT, SPEED, sketch, SIZE * SIZE);
         TREE.add(boid);
         PARTICLES.push(boid);
@@ -67,10 +68,16 @@ const s = (sketch) => {
         
 
         // spawns boids at mouse position
-        if(sketch.mouseIsPressed) {
+        if(sketch.mouseIsPressed && PARTICLES.length < MAX_PARTICLE_COUNT) {
             const boid = new Boid(sketch.mouseX, sketch.mouseY, SPEED, sketch, SIZE * SIZE);
             TREE.add(boid);
             PARTICLES.push(boid);
+        }
+
+        const counter = document.getElementById("counter")
+        counter.textContent = "Boid Counter: " + PARTICLES.length;
+        if(PARTICLES.length == MAX_PARTICLE_COUNT) {
+            counter.textContent += " (MAX)";
         }
     };
 

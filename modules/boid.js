@@ -22,7 +22,7 @@ export class Boid {
     // user's mouse
     update(neighbors, mousePos) {
         // avoiding mouse
-        if(this.distBetween(mousePos) < this.minDist * 200) {
+        if(mousePos != undefined && this.distBetween(mousePos) < this.minDist * 200) {
             const offset = this.p5.createVector(mousePos.x - this.x, mousePos.y - this.y);
             this.velocity.sub(offset.mult(100 / this.distBetween(mousePos)));
         }
@@ -59,7 +59,7 @@ export class Boid {
 
             // checking if nearby boids are too close
             if (this.distBetween(boid) < this.minDist * 1.5) {
-                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y).mult((this.minDist * 1.5) / this.distBetween(boid)));
+                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y));
             }
         }
 
