@@ -1,30 +1,89 @@
 :root {
     --main-color: rgb(136, 199, 218);
-    --shadow-color: #3F6883;
+    --shadow-color: rgb(63, 104, 131, 0.3);
+    --text: rgb(63, 104, 131);
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  background-image: none;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 canvas {
   display: block;
 }
 
-.container-element {
-    position:absolute;
+.overlay-container {
+    right: 0;
+    padding: 0;
+    display: flex;
 }
 
-button {
+.overlay {
+    align-self: flex-start;
+    margin-left: 0.5em;
+}
+
+.container-element {
+    position:absolute;
     margin: max(15px, 1.5vw);
+}
+
+h3 {
+    text-align: center;
+    margin: 0;
+    margin-top: 1em;
+}
+
+p, ol {
+    margin: 0;
+    margin-top: 0.5em;
+}
+
+.exit-button {
+    background-color: transparent;
+    border: none;
+    font-family: 'Arial Narrow Bold', sans-serif;
+    color: var(--text);
+    font-size: 1.8em;
+    font-weight: bold;
+    position: relative;
+    margin-bottom: -1em;
+    float: right;
+}
+
+#popup {
+    box-sizing: border-box;
+    border-radius: 2em;
+    padding: 1em 2em 1em 2em;
+
+    width: 30vw;
+    max-width: 450px;
+    min-width: 200px;
+    height: 95vh;
+
+    background-color: white;
+    color: var(--text);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: var(--text) transparent;   
+
+    transition: opacity 0.1s ease-out;
+}
+
+.white-text {
+    color: white;
+    font-weight: bolder;
+    text-shadow: 0 0 0.75rem var(--shadow-color);
+}
+
+.help-button {
     aspect-ratio: 1 / 1;
     width: 3vw;
     min-width: 1.5em;
-    max-width: 2vw;
-
-    right: 0px;
+    max-width: 2em;
 
     border-radius: 50%;
     border: solid;
@@ -46,8 +105,11 @@ button {
     color: white;
     border-width: 5px;
     color: var(--main-color);
-    cursor: pointer;
     text-shadow: none;
 
     background-color: white;
+}
+
+button:hover {
+    cursor: pointer;
 }

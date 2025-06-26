@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,12 +10,69 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 
     <script src="libraries/p5.min.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
+    <script>
+        function showPopup() {
+            document.getElementById("popup").style.opacity = "1";
+        }
+
+        function hidePopup() {
+            document.getElementById("popup").style.opacity = "0";
+        }
+    </script>
+
     <div class="container">
-        <button class="container-element help-button" type="button">?</button>
+        <h2 class="container-element white-text">BOID COUNT: 200</h2>
+
+        <div class="container-element overlay-container">
+            <div class="overlay" id="popup">
+                <button class="exit-button" onclick="hidePopup()">x</button>
+                <div class="text-section">
+                    <h3>INTRODUCTION</h3>
+                    <p>
+                        Welcome! This is my implementation of the boids algorithm developed by 
+                        Craig Reynolds. By having each boid independently follow 3 simple rules, 
+                        complex group behavior emerges that simulates the flocking behavior of 
+                        birds. The rules are as follows:
+                    </p>
+                    <ol>
+                        <li>Separation: steer to avoid collision with nearby boids</li>
+                        <li>Alignment: steer towards average heading of nearby boids</li>
+                        <li>Cohesion: steer towards center of surrounding boids</li>
+                    </ol>
+                    <p>
+                        I also added obstacle avoidance, where the boids will steer away from 
+                        and avoid the cursor.
+                    </p>
+
+                    <p>
+                        This project was made using p5.js and basic CSS, HTML, and JS. To challenge 
+                        myself during development, I implemented a quad tree to handle neighbor 
+                        detection (even though there are more practical methods) which you can see 
+                        with debug mode.
+                    </p>
+                </div>
+                <div class="text-section">
+                    <h3>CONTROLS</h3>
+                    <p>
+                        <strong>Click</strong> to spawn more boids
+                    </p>
+                    <p>
+                        <strong>D</strong> - toggles debug mode, outlining the nodes of the quadtree and highlighting 
+                        one boid to show which nodes are included in the neighbor search
+                    </p>
+                    <p>
+                        <strong>S</strong> - toggles obstacle avoidance to control whether boids avoid the cursor
+                    </p>
+                </div>
+            </div>
+            <button class="overlay help-button white-text" type="button" onclick="showPopup()">?</button>
+        </div>
+
         <script class="container-element" type="module" src="modules/sketch.js"></script>
     </div>
-  </body>
+</body>
+
 </html>
