@@ -1,8 +1,53 @@
+:root {
+    --main-color: rgb(136, 199, 218);
+    --shadow-color: #3F6883;
+}
+
 html, body {
   margin: 0;
   padding: 0;
+  background-image: none;
 }
 
 canvas {
   display: block;
+}
+
+.container-element {
+    position:absolute;
+}
+
+button {
+    margin: max(15px, 1.5vw);
+    aspect-ratio: 1 / 1;
+    width: 3vw;
+    min-width: 1.5em;
+    max-width: 2vw;
+
+    right: 0px;
+
+    border-radius: 50%;
+    border: solid;
+    border-color: white;
+    border-width: 5px;
+
+    font-size: 2.5em;
+    font-weight: bolder;
+    text-shadow: 0 0 0.75rem var(--shadow-color);
+
+    color: white;
+    background-color: var(--main-color);
+
+    filter: drop-shadow(0 0 0.5rem var(--shadow-color));
+    transition: background-color 0.3s ease;
+}
+
+.help-button:hover {
+    color: white;
+    border-width: 5px;
+    color: var(--main-color);
+    cursor: pointer;
+    text-shadow: none;
+
+    background-color: white;
 }
