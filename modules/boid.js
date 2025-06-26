@@ -59,7 +59,7 @@ export class Boid {
 
             // checking if nearby boids are too close
             if (this.distBetween(boid) < this.minDist * 1.5) {
-                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y));
+                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y).mult((this.minDist * 1.5) / this.distBetween(boid)));
             }
         }
 

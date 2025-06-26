@@ -7,7 +7,7 @@ const s = (sketch) => {
     let HEIGHT = sketch.windowHeight;
     const MARGIN = 10;
 
-    const MAX_PARTICLE_COUNT = 300;
+    const MAX_PARTICLE_COUNT = 500;
     const INIT_PARTICLE_COUNT = 40;
     const SPLITTING_FACTOR = 5;
     const SPEED = 7;
@@ -17,6 +17,9 @@ const s = (sketch) => {
 
     const SIZE = 20;
 
+    let debugOn = false;
+    let avoidMouse = true;
+
     // initialize boids at random positions
     for (let i = 0; i < INIT_PARTICLE_COUNT; i++) {
         const boid = new Boid(Math.random() * WIDTH, Math.random() * HEIGHT, SPEED, sketch, SIZE * SIZE);
@@ -24,8 +27,8 @@ const s = (sketch) => {
         PARTICLES.push(boid);
     };
 
-    /* const test = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
-    TREE.add(test); */
+    const test = new Boid(Math.random() * 400 + 200, Math.random() * 400 + 200, SPEED, sketch, SIZE * SIZE);
+    TREE.add(test);
 
     sketch.setup = () => {
         sketch.createCanvas(WIDTH, HEIGHT);
@@ -36,15 +39,33 @@ const s = (sketch) => {
     sketch.draw = () => {
         sketch.background(136, 198, 219);
 
-        //TREE.debugNeighbors(sketch, test);
-        //TREE.debug(sketch);
+        if(debugOn) {
+            TREE.debugNeighbors(sketch, test);
+            TREE.debug(sketch);
+
+            test.update(TREE.getNeighbors(test));
+
+            wrapBoid(test);
+
+            if (!test.parentNode.bound.contains(test.position)) {
+                TREE.update(test);
+            }
+            sketch.fill(0);
+
+            drawBoid(test);
+        }
+        
 
         sketch.fill(255);
         sketch.noStroke();
 
         // updates boid positions and renders
         for (const boid of PARTICLES) {
-            boid.update(TREE.getNeighbors(boid), {x: sketch.mouseX, y: sketch.mouseY});
+            if(avoidMouse) {
+                boid.update(TREE.getNeighbors(boid), {x: sketch.mouseX, y: sketch.mouseY});
+            } else {
+                boid.update(TREE.getNeighbors(boid), undefined);
+            }
 
             wrapBoid(boid);
 
@@ -54,19 +75,7 @@ const s = (sketch) => {
 
             drawBoid(boid);
         }
-
-        /* test.update(TREE.getNeighbors(test));
-
-        wrapBoid(test);
-
-        if (!test.parentNode.bound.contains(test.position)) {
-            TREE.update(test);
-        }
-        sketch.fill(0);
-
-        drawBoid(test); */
-        
-
+    
         // spawns boids at mouse position
         if(sketch.mouseIsPressed && PARTICLES.length < MAX_PARTICLE_COUNT) {
             const boid = new Boid(sketch.mouseX, sketch.mouseY, SPEED, sketch, SIZE * SIZE);
@@ -75,11 +84,21 @@ const s = (sketch) => {
         }
 
         const counter = document.getElementById("counter")
-        counter.textContent = "Boid Counter: " + PARTICLES.length;
+        counter.textContent = "Boid Count: " + PARTICLES.length;
         if(PARTICLES.length == MAX_PARTICLE_COUNT) {
             counter.textContent += " (MAX)";
         }
     };
+
+    sketch.keyPressed = () => {
+        if(sketch.key === 's') {
+            avoidMouse = !avoidMouse;
+        }
+
+        if(sketch.key === 'd') {
+            debugOn = !debugOn;
+        }
+    }
 
     // renders given boid
     function drawBoid(boid) {
