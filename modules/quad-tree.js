@@ -254,6 +254,10 @@ export class QuadTree {
         }
     }
 
+    clear() {
+        this.root = undefined;
+    }
+
     // Given a p5 sketch object, draws a visual representation of the regions split by each node.
     debug(sketch) {
         sketch.noFill();
@@ -283,6 +287,5 @@ export class QuadTree {
         sketch.fill('blue');
         const curr = obj.parentNode;
         sketch.rect(curr.bound.x1, curr.bound.y1, curr.bound.width, curr.bound.height);
-
     }
 }
