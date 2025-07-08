@@ -24,7 +24,7 @@ export class Boid {
     update(neighbors, mousePos) {
         this.color = this.p5.lerpColor(this.p5.color(255, 255, 255), this.p5.color(250, 205, 226), neighbors.length / 30);
 
-        // avoiding mouse
+        // mouse avoidance
         if(mousePos != undefined && this.distBetween(mousePos) < this.minDist * 200) {
             const offset = this.p5.createVector(mousePos.x - this.x, mousePos.y - this.y);
             this.velocity.sub(offset.mult(100 / this.distBetween(mousePos)));
@@ -62,7 +62,7 @@ export class Boid {
 
             // checking if nearby boids are too close
             if (this.distBetween(boid) < this.minDist * 1.5) {
-                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y).mult((this.minDist * 1.5) / this.distBetween(boid)));
+                avoidance.add(this.p5.createVector(boid.x - this.x, boid.y - this.y));
             }
         }
 
