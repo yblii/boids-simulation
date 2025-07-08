@@ -13,28 +13,18 @@
 </head>
 
 <body>
-    <script>
-        function showPopup() {
-            document.getElementById("popup").style.opacity = "1";
-        }
-
-        function hidePopup() {
-            document.getElementById("popup").style.opacity = "0";
-        }
-    </script>
-
     <div class="container">
         <h2 class="container-element white-text" id="counter">50</h2>
 
         <div class="container-element overlay-container">
             <div class="overlay" id="popup">
-                <button class="exit-button" onclick="hidePopup()">x</button>
-                <div class="text-section">
+                <button class="no-select" id="close-popup">x</button>
+                <div class="text-section no-select">
                     <h3>INTRODUCTION</h3>
                     <p>
-                        Welcome! This is my implementation of the boids algorithm developed by 
-                        Craig Reynolds. By having each boid independently follow 3 simple rules, 
-                        complex group behavior emerges that simulates the flocking behavior of 
+                        Welcome! This is my implementation of the boids algorithm developed by
+                        Craig Reynolds. By having each boid independently follow 3 simple rules,
+                        complex group behavior emerges that simulates the flocking behavior of
                         birds. The rules are as follows:
                     </p>
                     <ol>
@@ -43,23 +33,23 @@
                         <li>Cohesion: steer towards center of surrounding boids</li>
                     </ol>
                     <p>
-                        I also added obstacle avoidance, where the boids will steer away from 
+                        I also added obstacle avoidance, where the boids will steer away from
                         and avoid the cursor.
                     </p>
 
                     <p>
-                        This project was made using p5.js and basic CSS, HTML, and JS. To challenge 
-                        myself during development, I implemented a quad tree to handle neighbor 
+                        This project was made using p5.js and basic CSS, HTML, and JS. To challenge
+                        myself during development, I implemented a quad tree to handle neighbor
                         detection which you can see with debug mode. Enjoy!
                     </p>
                 </div>
-                <div class="text-section">
+                <div class="text-section no-select">
                     <h3>CONTROLS</h3>
                     <p>
                         <strong>Click</strong> to spawn more boids
                     </p>
                     <p>
-                        <strong>D</strong> - toggles debug mode, outlining the nodes of the quadtree and highlighting 
+                        <strong>D</strong> - toggles debug mode, outlining the nodes of the quadtree and highlighting
                         one boid to show which nodes are included in the neighbor search
                     </p>
                     <p>
@@ -70,11 +60,11 @@
                     </p>
                 </div>
             </div>
-            <button class="overlay help-button white-text" type="button" onclick="showPopup()">?</button>
+            <button class="overlay white-text no-select" id="help-button">?</button>
         </div>
-
-        <script class="container-element" type="module" src="modules/sketch.js"></script>
     </div>
+    <script type="module" src="modules/sketch.js"></script>
+    <script type="module" src="modules/managePopup.js"></script>
 </body>
 
 </html>

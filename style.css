@@ -42,7 +42,7 @@ p, ol {
     margin-top: 0.5em;
 }
 
-.exit-button {
+#close-popup {
     background-color: transparent;
     border: none;
     font-family: 'Arial Narrow Bold', sans-serif;
@@ -80,7 +80,7 @@ p, ol {
     text-shadow: 0 0 0.75rem var(--shadow-color);
 }
 
-.help-button {
+#help-button {
     aspect-ratio: 1 / 1;
     width: 3vw;
     min-width: 1.5em;
@@ -102,7 +102,7 @@ p, ol {
     transition: background-color 0.3s ease;
 }
 
-.help-button:hover {
+#help-button:hover {
     color: white;
     border-width: 5px;
     color: var(--main-color);
@@ -113,4 +113,9 @@ p, ol {
 
 button:hover {
     cursor: pointer;
+}
+
+.no-select {
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
