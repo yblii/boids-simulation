@@ -11,6 +11,7 @@ export class Boid {
 
         this.p5 = p5;
         this.parentNode = undefined;
+        this.color = p5.color(255, 255, 255);
     }
 
     // returns current position of boid (x, y) in an object
@@ -21,6 +22,8 @@ export class Boid {
     // updates the boid's velocity and position given a list of neighboring boids and the 
     // user's mouse
     update(neighbors, mousePos) {
+        this.color = this.p5.lerpColor(this.p5.color(255, 255, 255), this.p5.color(250, 205, 226), neighbors.length / 30);
+
         // avoiding mouse
         if(mousePos != undefined && this.distBetween(mousePos) < this.minDist * 200) {
             const offset = this.p5.createVector(mousePos.x - this.x, mousePos.y - this.y);

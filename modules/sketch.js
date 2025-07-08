@@ -31,7 +31,7 @@ const s = (sketch) => {
     };
 
     sketch.draw = () => {
-        sketch.background(136, 198, 219);
+        sketch.background(103, 178, 201);
 
         // renders debug mode
         if(debugOn) {
@@ -46,12 +46,10 @@ const s = (sketch) => {
                 tree.update(testBoid);
             }
             sketch.fill(0);
-
+            testBoid.color = sketch.color(0, 0, 0);
             drawBoid(testBoid);
         }
         
-
-        sketch.fill(255);
         sketch.noStroke();
 
         // updates every boid's position and renders it
@@ -98,29 +96,7 @@ const s = (sketch) => {
 
     // detects window being resized and updates quadtree bounds with current boids
     sketch.windowResized = () => {
-        width = sketch.windowWidth;
-        height = sketch.windowHeight;
-
-        sketch.resizeCanvas(width, height);
-
-        console.log(width + ", " + height);
-
-        tree.clear();
-        tree.updateBounds(new Bound(0 - MARGIN, width + MARGIN, 0 - MARGIN, height + MARGIN));
-
-        for(const boid of boids) {
-            if(!tree.bound.contains(boid.position)) {
-                boid.x = width / 2;
-                boid.y = height / 2;
-            }
-            tree.add(boid);
-        }
-
-        if(!tree.bound.contains(testBoid.position)) {
-            testBoid.x = width / 2;
-            testBoid.y = height / 2;
-        }
-        tree.add(testBoid);
+        location.reload();
     }
 
     // updates the boid counter html element with the current count
@@ -150,7 +126,7 @@ const s = (sketch) => {
 
     // renders given boid
     function drawBoid(boid) {
-        //sketch.circle(boid.position.x, boid.position.y, SIZE - 2);
+        sketch.fill(boid.color);
 
         const dirVector = boid.velocity.copy();
         dirVector.setMag(BOID_SIZE);

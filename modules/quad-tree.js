@@ -111,9 +111,7 @@ export class QuadTree {
     update(obj) {
         let node = obj.parentNode;
         node.remove(obj);
-        
         this.tryCollapse(node.parentNode);
-
         // finds smallest parent node that contains the obj
         while(!node.bound.contains(obj)) {
             node = node.parentNode;
@@ -257,12 +255,6 @@ export class QuadTree {
     // clears current quadtree
     clear() {
         this.root = undefined;
-    }
-
-    // updates the quadtree's bounds
-    updateBounds(bound) {
-        this.bound = bound;
-        this.minWidth = bound.width / 20;
     }
 
     // Given a p5 sketch object, draws a visual representation of the regions split by each node.
